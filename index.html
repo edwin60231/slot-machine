@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎰 PREMIUM CASINO：母雞專屬拉霸機 🎰</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            background: radial-gradient(circle at center, #1a1a2e 0%, #0a0516 100%);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "PingFang TC", "Microsoft JhengHei", sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            color: #ffffff;
+        }
+
+        h1 {
+            color: #fff;
+            text-shadow: 0 0 10px #ff007f, 0 0 20px #ff007f, 0 0 40px #ff007f;
+            margin-bottom: 25px;
+            font-size: 2rem;
+            letter-spacing: 2px;
+            text-align: center;
+            padding: 0 10px;
+        }
+
+        /* 高級 iOS 磨砂毛玻璃外殼 */
+        .machine-container {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 24px;
+            padding: 35px 45px;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6), 
+                        inset 0 0 30px rgba(255, 255, 255, 0.02);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        /* 奢華金邊裝飾 */
+        .machine-container::before {
+            content: '';
+            position: absolute;
+            top: -4px; left: -4px; right: -4px; bottom: -4px;
+            border: 2px solid #ffd700;
+            border-radius: 28px;
+            opacity: 0.4;
+            pointer-events: none;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
+        }
+
+        /* 轉輪視窗 */
+        .slots-window {
+            display: flex;
+            background: #050508;
+            border-radius: 16px;
+            padding: 15px;
+            gap: 15px;
+            box-shadow: inset 0 0 40px rgba(0, 0, 0, 1), 
+                        0 0 20px rgba(255, 215, 0, 0.15);
+            margin-bottom: 30px;
+            border: 1.5px solid #ffd700;
+        }
+
+        /* 單個轉輪軌道 */
+        .slot-container {
+            width: 95px;
+            height: 120px;
+            background: #111116;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.9);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* 垂直滾動條 */
+        .slot-reel {
+            display: flex;
+            flex-direction: column;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            will-change: transform;
+        }
+
+        .slot-item {
+            width: 100%;
+            height: 120px;
+            font-size: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            user-select: none;
+        }
+
+        /* 轉動中動畫 */
+        .spinning {
+            animation: spinReel 0.12s linear infinite;
+        }
+
+        @keyframes spinReel {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-960px); } /* 剛好是一輪8個項目的高度 */
+        }
+
+        /* 霓虹啟動按鈕 */
+        .spin-btn {
+            background: linear-gradient(135deg, #ff007f 0%, #7928ca 100%);
+            color: white;
+            border: none;
+            padding: 16px 55px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 0 15px rgba(255, 0, 127, 0.4);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            letter-spacing: 2px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .spin-btn:hover:not(:disabled) {
+            transform: scale(1.05);
+            box-shadow: 0 0 25px rgba(255, 0, 127, 0.7), 0 0 15px #7928ca;
+        }
+
+        .spin-btn:active:not(:disabled) {
+            transform: scale(0.98);
+        }
+
+        .spin-btn:disabled {
+            background: #2a2a35;
+            color: #555565;
+            box-shadow: none;
+            border-color: transparent;
+            cursor: not-allowed;
+        }
+
+        /* 狀態訊息提示 */
+        #message {
+            margin-top: 25px;
+            font-size: 20px;
+            font-weight: 500;
+            color: #a0aec0;
+            height: 50px;
+            text-align: center;
+            max-width: 320px;
+            line-height: 1.4;
+        }
+
+        /* 計次顯示 */
+        .status-bar {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.4);
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>🎰 PREMIUM CASINO<br><span style="font-size: 1.2rem; color: #ffd700;">母雞專屬·幸運拉霸</span></h1>
+    
+    <div class="status-bar" id="status-bar">剩餘金幣：∞ / 本局累積次數：∞</div>
+
+    <div class="machine-container">
+        <div class="slots-window">
+            <div class="slot-container"><div class="slot-reel" id="reel1"></div></div>
+            <div class="slot-container"><div class="slot-reel" id="reel2"></div></div>
+            <div class="slot-container"><div class="slot-reel" id="reel3"></div></div>
+        </div>
+        
+        <button class="spin-btn" id="spin-btn" onclick="startSpin()">PULL / 拉下把手</button>
+    </div>
+
+    <div id="message">女友不陪，股票賠，拉動手氣吧！✨</div>
+
+    <script>
+        const items = ['❤️', '👑', '🎟️', '🎬', '🚗', '💸', '📝', '🐔'];
+        
+        const rewards = {
+            '❤️': { big: '🎉 中大獎！！恭喜獲得「熱烈親密一次」！💋', small: '差一點點！安慰獎：親密貼貼一次 😘' },
+            '👑': { big: '🎉 中大獎！！恭喜獲得「當國王一天（聽你的話）」！👑', small: '差一點！獲得「國王實習生」：幫你倒水一次 💧' },
+            '🎟️': { big: '🎉 中大獎！！恭喜獲得「免死金牌一張」！🎟️', small: '差一點！獲得「減刑券」：少碎念 5 分鐘 🤫' },
+            '🎬': { big: '🎉 中大獎！！恭喜獲得「陪看想看的電影（含爆米花）」！🎬', small: '差一點！獲得選片權：下次電影給你選 📺' },
+            '🚗': { big: '🎉 中大獎！！恭喜獲得「載老婆上班一天」！🚗', small: '差一點！獲得「還是要載我上班」 🗺️' },
+            '💸': { big: '🎉 中大獎！！恭喜獲得「清空老婆購物車（限額）」！💸', small: '差一點！獲得「買單小廢物一項」 🍫' },
+            '📝': { big: '🎉 中大獎！！恭喜獲得「特製驚喜手寫卡片」！📝', small: '差一點！獲得「情話便利貼一張」 ✍️' },
+            '🐔': { big: '🎉 中大獎！！恭喜獲得「母雞遊戲遊玩券乙張」！🐔', small: '差一點！獲得「母雞要去搭電梯」 🐔' }
+        };
+
+        let isSpinning = false;
+        let spinCount = 0;
+
+        function initReels() {
+            for (let i = 1; i <= 3; i++) {
+                const reel = document.getElementById(`reel${i}`);
+                reel.innerHTML = '';
+                const displayItems = [...items, ...items, ...items];
+                displayItems.forEach(item => {
+                    const div = document.createElement('div');
+                    div.className = 'slot-item';
+                    div.innerText = item;
+                    reel.appendChild(div);
+                });
+                reel.style.transform = 'translateY(0px)';
+            }
+        }
+
+        function startSpin() {
+            if (isSpinning) return;
+            isSpinning = true;
+            spinCount++;
+
+            const btn = document.getElementById('spin-btn');
+            const msg = document.getElementById('message');
+            document.getElementById('status-bar').innerText = `剩餘金幣：∞ / 本局累積次數：${spinCount}`;
+            
+            btn.disabled = true;
+            msg.style.color = '#ffd700';
+            msg.innerText = 'CHANCE... 好運瘋狂轉動中！🔥';
+
+            const reel1 = document.getElementById('reel1');
+            const reel2 = document.getElementById('reel2');
+            const reel3 = document.getElementById('reel3');
+
+            reel1.classList.add('spinning');
+            reel2.classList.add('spinning');
+            reel3.classList.add('spinning');
+
+            // 純隨機抽獎
+            const res1 = items[Math.floor(Math.random() * items.length)];
+            const res2 = items[Math.floor(Math.random() * items.length)];
+            const res3 = items[Math.floor(Math.random() * items.length)];
+
+            const idx1 = items.indexOf(res1);
+            const idx2 = items.indexOf(res2);
+            const idx3 = items.indexOf(res3);
+
+            setTimeout(() => {
+                reel1.classList.remove('spinning');
+                reel1.style.transform = `translateY(-${idx1 * 120}px)`;
+            }, 1000);
+
+            setTimeout(() => {
+                reel2.classList.remove('spinning');
+                reel2.style.transform = `translateY(-${idx2 * 120}px)`;
+            }, 1700);
+
+            setTimeout(() => {
+                reel3.classList.remove('spinning');
+                reel3.style.transform = `translateY(-${idx3 * 120}px)`;
+                checkResult(res1, res2, res3);
+            }, 2400);
+        }
+
+        function checkResult(r1, r2, r3) {
+            const btn = document.getElementById('spin-btn');
+            const msg = document.getElementById('message');
+
+            if (r1 === r2 && r2 === r3) {
+                msg.style.color = '#ff007f';
+                msg.innerHTML = rewards[r1].big;
+            } else if (r1 === r2 || r1 === r3) {
+                msg.style.color = '#00f0ff';
+                msg.innerText = rewards[r1].small;
+            } else if (r2 === r3) {
+                msg.style.color = '#00f0ff';
+                msg.innerText = rewards[r2].small;
+            } else {
+                msg.style.color = '#a0aec0';
+                msg.innerText = '好（摳）慘（連）啦！獲得「安慰抱抱一個」🫂 再試一次吧！';
+            }
+
+            btn.disabled = false;
+            isSpinning = false;
+        }
+
+        window.onload = initReels;
+    </script>
+</body>
+</html>
